@@ -146,7 +146,7 @@ class Field {
 
       if (
         field[randRow][randCol] === fieldCharacter &&
-        !(randRow === 0 && randCol === 0)
+        (randRow === 0 && randCol === 0)
       ) {
         field[randRow][randCol] = hat;
         break;
