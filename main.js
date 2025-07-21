@@ -26,17 +26,18 @@ class Field {
 	print() {
 		clear();
 		// Replace with your own code //
-      for (let i = 0; i < this.field.length; i++) {
-    let row = this.field[i];
-    let rowStrings = [];
+    for (let i = 0; i < this.field.length; i++) {
+      let row = this.field[i];
+      let rowStrings = [];
     for (let j = 0; j < row.length; j++) {
       rowStrings.push('"' + row[j] + '"');
     }
     console.log("[" + rowStrings.join(", ") + "],");
 	}
 }
+
 	// Your Code //
-	//step 2 create direction method
+	//step 2 create direction method and check position requirement
 	moveUp() {
     this.row--;
     this.checkPosition();
@@ -68,6 +69,7 @@ class Field {
       process.exit();
     }
 
+    //peek the player position
     const tile = this.field[this.row][this.column];
 
     if (tile === hole) {
@@ -80,12 +82,23 @@ class Field {
 
     this.field[this.row][this.column] = pathCharacter;
   }
-	//Step 3 get input from player and check walking map requirement
-  askQuestion() {
-    const direction = prompt(
-      "Which way? (u = up, d = down, l = left, r = right): "
-    ).toLowerCase();
 
+ //Step 3 get input from player
+  askQuestion() {
+    //Warning when player stay on border
+    if (
+      this.row === 0 ||
+      this.row === this.field.length -1 ||
+      this.column === 0 ||
+      this.column === this.field.length -1
+    ) {
+      console.log("Waring: You are near the edge O_O");
+    }
+
+    const direction = prompt(
+      "Please choose your direction. (u = up, d = down, l = left, r = right): "
+    ).toLowerCase();
+    
     switch (direction) {
       case "u":
         this.moveUp();
@@ -101,10 +114,11 @@ class Field {
         break;
       default:
         console.log("Invalid input. Use u, d, l, or r.");
-  	  }
-	}
-  //step 4 create random hole and player staring point
-   static generateField(height, width, holePercentage = 0.2) {
+    }
+  }
+
+  //step 4 create random hole and player starting point
+  static generateField(height, width, holePercentage = 0.3) {
     const field = new Array(height).fill(null).map(() =>
       new Array(width).fill(fieldCharacter)
     );
@@ -125,10 +139,11 @@ class Field {
         holesPlaced++;
       }
     }
-    // Randomly place the hat (^) on an empty spot not starting point
+    // Step 5 Randomly place the hat (^) on an empty spot not starting point
     while (true) {
       const randRow = Math.floor(Math.random() * height);
       const randCol = Math.floor(Math.random() * width);
+
       if (
         field[randRow][randCol] === fieldCharacter &&
         !(randRow === 0 && randCol === 0)
@@ -143,14 +158,12 @@ class Field {
 }
 
 // Game Mode ON
-// Remark: Code example below should be deleted and use your own code.
-const newGame = new Field([
-	["░", "░", "O"],
-	["░", "O", "░"],
-	["░", "^", "░"],
-]);
+
+//Step 6 generate random map with 3*3 
+const map = Field.generateField(3,3);
+const newGame = new Field(map);
 
 while (true) {
-	newGame.print();
-	newGame.askQuestion();
+  newGame.print();
+  newGame.askQuestion();
 }
